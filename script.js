@@ -1,71 +1,49 @@
 //your JS code here. If required.
-// Function to generate a random delay between min and max seconds
-function getRandomDelay(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min) * 1000; // Convert to milliseconds
+function createPromise() {
+  return new Promise((resolve, rewject) => {
+    let time = Math.floor(Math.random() * (3000 - 1000) + 1000);
+    setTimeout(() => {
+      resolve(time);
+    }, time);
+  });
 }
 
-// Function to create a promise with a random delay
-function createPromise(number) {
-    return new Promise((resolve, reject) => {
-        const delay = getRandomDelay(1, 3);
-        setTimeout(() => {
-            resolve({
-                promise: `Promise ${number}`,
-                timeTaken: (delay / 1000).toFixed(3) // Convert back to seconds with 3 decimal places
-            });
-        }, delay);
-    });
-}
+let promises = [createPromise(), createPromise(), createPromise()];
 
-// Array to hold all promises
-let promises = [];
+let tbody = document.querySelector("#output");
 
-// Create 3 promises
-for (let i = 1; i <= 3; i++) {
-    promises.push(createPromise(i));
-}
+let row = document.createElement("tr");
+row.id = "loading";
+let newCells = document.createElement('td')
+newCells.colSpan = 2;
+newCells.innerText = 'Loading...';
 
-// Placeholder text for the loading rows
-const loadingText = 'Loading...';
+row.appendChild(newCells);
 
-// Add loading rows to the table
-for (let i = 0; i < 3; i++) {
-    let tbody = document.querySelector('#output');
-    let row = tbody.insertRow();
-    let cell1 = row.insertCell(0);
-    let cell2 = row.insertCell(1);
-    cell1.textContent = loadingText;
-    cell2.textContent = loadingText;
-}
-
-// Use Promise.all() to wait for all promises to resolve
-Promise.all(promises).then(results => {
-    // Remove loading text
-    let loadingRows = document.querySelectorAll('#output tr');
-    loadingRows.forEach(row => {
-        row.remove();
-    });
-
-    // Populate the table with the resolved values
-    let tbody = document.querySelector('#output');
-    let totalSeconds = 0;
-    results.forEach((result, index) => {
-        let row = tbody.insertRow();
-        let cell1 = row.insertCell(0);
-        let cell2 = row.insertCell(1);
-        cell1.textContent = result.promise;
-        cell2.textContent = result.timeTaken;
-
-        // Calculate total time taken
-        totalSeconds += parseFloat(result.timeTaken);
-    });
-
-    // Add the total row
-    let totalRow = tbody.insertRow();
-    let cell1 = totalRow.insertCell(0);
-    let cell2 = totalRow.insertCell(1);
-    cell1.textContent = 'Total';
-    cell2.textContent = totalSeconds.toFixed(3);
-}).catch(error => {
-    console.error('Error:', error);
-});
+tbody.appendChild(row);
+Promise.all(promises).then((result) => {
+  document.querySelector('#loading').remove();
+  // let totalTime = result.reduce((a,b)=>a + b,0)
+  let totalTime = 0
+  result.forEach((elem,i)=>{
+    let row = document.createElement("tr")
+    let cell1 = document.createElement('td');
+    cell1.innerText = `Promise ${i + 1}`;
+    let cell2 = document.createElement('td');
+    cell2.innerText = `${(elem / 1000).toFixed(3)}`;
+    row.appendChild(cell1);
+    row.appendChild(cell2);
+    tbody.appendChild(row);
+    totalTime += (elem/1000);
+  })
+  let row = document.createElement("tr")
+  let cell1 = document.createElement('td');
+  cell1.innerHTML = 'Total'
+  let cell2 = document.createElement('td');
+  cell2.innerText = `${totalTime}`;
+  
+  row.appendChild(cell1);
+  row.appendChild(cell2);
+  tbody.appendChild(row);
+  console.log(totalTime);
+})

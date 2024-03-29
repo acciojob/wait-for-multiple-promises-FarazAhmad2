@@ -23,8 +23,7 @@ row.appendChild(newCells);
 tbody.appendChild(row);
 Promise.all(promises).then((result) => {
   document.querySelector('#loading').remove();
-  // let totalTime = result.reduce((a,b)=>a + b,0)
-  let totalTime = 0
+  let totalTime = result.reduce((a,b)=>a + b,0)
   result.forEach((elem,i)=>{
     let row = document.createElement("tr")
     let cell1 = document.createElement('td');
@@ -34,13 +33,12 @@ Promise.all(promises).then((result) => {
     row.appendChild(cell1);
     row.appendChild(cell2);
     tbody.appendChild(row);
-    totalTime += (elem/1000);
   })
   let row = document.createElement("tr")
   let cell1 = document.createElement('td');
   cell1.innerHTML = 'Total'
   let cell2 = document.createElement('td');
-  cell2.innerText = `${totalTime}`;
+  cell2.innerText = `${(totalTime/1000).toFixed(3)}`;
   
   row.appendChild(cell1);
   row.appendChild(cell2);

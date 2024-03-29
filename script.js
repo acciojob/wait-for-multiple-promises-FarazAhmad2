@@ -22,7 +22,7 @@ row.appendChild(newCells);
 
 tbody.appendChild(row);
 Promise.all(promises).then((result) => {
-  document.querySelector('#loading').remove();
+  // document.querySelector('#loading').remove();
   // let totalTime = result.reduce((a,b)=>a + b,0)
   let totalTime = 0
   result.forEach((elem,i)=>{
